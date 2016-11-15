@@ -1,0 +1,34 @@
+#ifndef MYSQLSESSION_H
+#define MYSQLSESSION_H
+
+#include <mysql/mysql.h>
+#include <vector>
+#include <string>
+#include <iostream>
+
+#include "cflight.h"
+
+class CMysqlSession 
+{
+public:
+	CMysqlSession()
+	{
+		mysql_init(&mysql);
+	}
+
+	int connectDB();
+	std::vector<std::string> executeSQL(std::string sql);
+	int insertData(std::string sql);
+	std::vector<Flight> fetchFlightInfo(std::string sql);
+	int executeDelSQL(std::string sql);
+
+	~CMysqlSession()
+	{
+		mysql_close(connection);
+	}
+private:
+	MYSQL* connection;
+	MYSQL  mysql;
+};
+
+#endif
