@@ -84,10 +84,6 @@ int CSession::initializeSocket(const char* serverIP, const int airlinePort, cons
 
 int CSession::startSevice()
 {
-	FD_SET(m_airlinefd, &readfds);
-	FD_SET(m_adminfd, &readfds);
-	FD_SET(m_userfd, &readfds);
-	
 	if(listen(m_airlinefd,10) < 0)
     {
         perror("Failed to listen");
@@ -107,13 +103,19 @@ int CSession::startSevice()
     }
 
     int nfds = std::max(m_airlinefd, std::max(m_userfd, m_adminfd));
+
     printf("server start...\n");
     while (1)
     {
+        FD_ZERO(&readfds);
+        FD_SET(m_airlinefd, &readfds);
+        FD_SET(m_adminfd, &readfds);
+        FD_SET(m_userfd, &readfds);
 
     	int ret = select(nfds + 1, &readfds, NULL, NULL, NULL);
     	if (ret <= 0)
     	{
+            printf("error\n");
     		return -1;
     	}
 
